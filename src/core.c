@@ -3,14 +3,44 @@
 
 #include "core.h"
 #include "error.h"
+#include "game.h"
 #include "render.h"
+
+const char* world[] = {
+  "#################################",
+  "#                               #",
+  "#                               #",
+  "#                               #",
+  "#                               #",
+  "#                               #",
+  "#                               #",
+  "#                               #",
+  "#                               #",
+  "#                               #",
+  "#                               #",
+  "#                               #",
+  "#                               #",
+  "#                               #",
+  "#                               #",
+  "#                               #",
+  "#                               #",
+  "#                               #",
+  "#          P                    #",
+  "#################################",
+};
+Game game;
+
+// TODO load map file into "world" variable before passing it to the renderer
+static char** load_world(const char* file_path) {
+
+}
 
 void core_init(Core* core) {
   core->state = INIT;
 
   core->win_width = 1440;
   core->win_height = 1080;
-  core->fps = 12;
+  core->fps = 6;
 
   if (SDL_Init(SDL_INIT_VIDEO) < 0)
     sdl_error();
@@ -19,7 +49,7 @@ void core_init(Core* core) {
   if (!(IMG_Init(img_init_flags) & img_init_flags))
     img_error();
 
-  core->window = SDL_CreateWindow("Chill Guy", 
+  core->window = SDL_CreateWindow("Paccy", 
       SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
       core->win_width, core->win_height, SDL_WINDOW_SHOWN);
 
@@ -30,6 +60,11 @@ void core_init(Core* core) {
 
   if (core->renderer == NULL)
     sdl_error();
+
+
+  game_init(&game);
+  // TODO load map from file
+  //world = load_world("res/map.txt");
 }
 
 static void cap_fps(Uint32 elapsed, int fps) {
@@ -45,10 +80,8 @@ void core_run(Core* core) {
   while (core->state == RUNNING) {
     Uint32 start = SDL_GetTicks();
 
-    SDL_SetRenderDrawColor(core->renderer, 0, 0, 0, 0xFF);
-    SDL_RenderClear(core->renderer);
 
-    // user input
+    // INPUT
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
       if (event.type == SDL_QUIT) {
@@ -56,7 +89,16 @@ void core_run(Core* core) {
       }
     }
 
-    render_world();
+    // UPDATE
+    game_step(&game);
+
+    // RENDER
+    // TODO: factor into a single function?
+    SDL_SetRenderDrawColor(core->renderer, 0, 0, 0, 0xFF);
+    SDL_RenderClear(core->renderer);
+    render_world(core->renderer, world, 33, 20);
+    render_player(core->renderer, &game.player);
+
     SDL_RenderPresent(core->renderer);
 
     Uint32 end = SDL_GetTicks();
@@ -73,3 +115,4 @@ void core_exit(Core* core) {
   IMG_Quit();
   SDL_Quit();
 }
+

@@ -1,20 +1,27 @@
 #include <SDL2/SDL.h>
 #include "render.h"
 
-static char** load_map(const char* file_path) {
-  const int MAX_LINE = 100;
-  const int MAX_LINE_LENGTHS = 256;
+#define TILE_SIZE 32
+#define WHITE 255, 255, 255
+#define YELLOW 255, 255, 0
 
-  FILE* file = fopen(file_path, "r");
-  if (!file) {
-    printf("Error opening a file brodie (%s)", file_path);
-    return NULL;
+void render_world(SDL_Renderer* renderer, const char** world, int width, int height) {
+  for (int i = 0; i < height; i++) {
+    for (int j = 0; j < width; j++) {
+      SDL_Rect r = {j * TILE_SIZE, i * TILE_SIZE, TILE_SIZE, TILE_SIZE};
+      if (world[i][j] == '#') {
+        SDL_SetRenderDrawColor(renderer, WHITE, 255);
+      }
+
+      if (world[i][j] != ' ')
+        SDL_RenderFillRect(renderer, &r);
+    }
   }
-
-  char** lines = malloc(MAX_LINES
 }
 
-void render_world(const char* file_path) {
-  load_map(file_path);
-
+void render_player(SDL_Renderer* renderer, Entity* player) {
+  SDL_SetRenderDrawColor(renderer, YELLOW, 255);
+  SDL_Rect r = {player->pos.x * TILE_SIZE, player->pos.y * TILE_SIZE, TILE_SIZE, TILE_SIZE};
+  printf("x\n");
+  SDL_RenderFillRect(renderer, &r);
 }
