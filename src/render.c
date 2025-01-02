@@ -1,27 +1,35 @@
 #include <SDL2/SDL.h>
+
 #include "render.h"
 
-#define TILE_SIZE 32
 #define WHITE 255, 255, 255
 #define YELLOW 255, 255, 0
 
-void render_world(SDL_Renderer* renderer, const char** world, int width, int height) {
+static void render_world(SDL_Renderer* renderer, const char** world, int width, int height) {
   for (int i = 0; i < height; i++) {
     for (int j = 0; j < width; j++) {
       SDL_Rect r = {j * TILE_SIZE, i * TILE_SIZE, TILE_SIZE, TILE_SIZE};
       if (world[i][j] == '#') {
         SDL_SetRenderDrawColor(renderer, WHITE, 255);
-      }
-
-      if (world[i][j] != ' ')
         SDL_RenderFillRect(renderer, &r);
+      }
     }
   }
 }
 
-void render_player(SDL_Renderer* renderer, Entity* player) {
+static void render_player(SDL_Renderer* renderer, Entity* player) {
   SDL_SetRenderDrawColor(renderer, YELLOW, 255);
   SDL_Rect r = {player->pos.x * TILE_SIZE, player->pos.y * TILE_SIZE, TILE_SIZE, TILE_SIZE};
-  printf("x\n");
   SDL_RenderFillRect(renderer, &r);
+}
+
+// rendering logic
+void render(SDL_Renderer* renderer, Game* game) {
+  SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0xFF);
+  SDL_RenderClear(renderer);
+
+  render_world(renderer, game->world, 33, 20);
+  render_player(renderer, &game->player);
+
+  SDL_RenderPresent(renderer);
 }

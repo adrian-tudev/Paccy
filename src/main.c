@@ -7,8 +7,6 @@
 int main() {
   printf("init.\n");
   Core core;
-  Game game;
-  
   core_init(&core);
   core_run(&core);
   core_exit(&core);

@@ -6,34 +6,7 @@
 #include "game.h"
 #include "render.h"
 
-const char* world[] = {
-  "#################################",
-  "#                               #",
-  "#                               #",
-  "#                               #",
-  "#                               #",
-  "#                               #",
-  "#                               #",
-  "#                               #",
-  "#                               #",
-  "#                               #",
-  "#                               #",
-  "#                               #",
-  "#                               #",
-  "#                               #",
-  "#                               #",
-  "#                               #",
-  "#                               #",
-  "#                               #",
-  "#          P                    #",
-  "#################################",
-};
 Game game;
-
-// TODO load map file into "world" variable before passing it to the renderer
-static char** load_world(const char* file_path) {
-
-}
 
 void core_init(Core* core) {
   core->state = INIT;
@@ -61,25 +34,22 @@ void core_init(Core* core) {
   if (core->renderer == NULL)
     sdl_error();
 
-
-  game_init(&game);
-  // TODO load map from file
-  //world = load_world("res/map.txt");
-}
-
-static void cap_fps(Uint32 elapsed, int fps) {
-  Uint32 target = 1000 / fps;
-  Uint32 wait = target - elapsed;
-  SDL_Delay(wait);
+  // core is owner of game, should call cleanup()
+  if (!game_init(&game)) {
+    printf("Couldn't initialize the game!\n");
+    exit(-1);
+  }
 }
 
 void core_run(Core* core) {
   core->state = RUNNING;
 
+  Uint32 elapsed = 0;
   printf("run.\n");
+  
+
   while (core->state == RUNNING) {
     Uint32 start = SDL_GetTicks();
-
 
     // INPUT
     SDL_Event event;
@@ -87,28 +57,54 @@ void core_run(Core* core) {
       if (event.type == SDL_QUIT) {
         core->state = EXIT;
       }
+      if (event.type == SDL_KEYDOWN) {
+        switch (event.key.keysym.scancode) {
+          case SDL_SCANCODE_UP:
+            game.player.dir.x = 0;
+            game.player.dir.y = -1;
+            break;
+
+          case SDL_SCANCODE_DOWN:
+            game.player.dir.x = 0;
+            game.player.dir.y = 1;
+            break;
+
+          case SDL_SCANCODE_RIGHT:
+            game.player.dir.x = 1;
+            game.player.dir.y = 0;
+            break;
+
+          case SDL_SCANCODE_LEFT:
+            game.player.dir.x = -1;
+            game.player.dir.y = 0;
+            break;
+
+          default:
+            break;
+        }
+      }
     }
 
-    // UPDATE
-    game_step(&game);
+    // UPDATE according to FPS
+    if (elapsed >= 1000 / core->fps) {
+      game_step(&game);
+      elapsed = 0;
+    }
 
     // RENDER
-    // TODO: factor into a single function?
-    SDL_SetRenderDrawColor(core->renderer, 0, 0, 0, 0xFF);
-    SDL_RenderClear(core->renderer);
-    render_world(core->renderer, world, 33, 20);
-    render_player(core->renderer, &game.player);
-
-    SDL_RenderPresent(core->renderer);
+    render(core->renderer, &game);
 
     Uint32 end = SDL_GetTicks();
-    Uint32 elapsed = end - start;
-    cap_fps(elapsed, core->fps);
+    Uint32 frame_duration = end - start;
+    elapsed += frame_duration;
+    // cap_fps(elapsed, core->fps);
   }
 }
 
 void core_exit(Core* core) {
   core->state = CLEANUP;
+
+  game_cleanup(&game);
   SDL_DestroyRenderer(core->renderer);
   SDL_DestroyWindow(core->window);
 

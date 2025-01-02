@@ -2,10 +2,12 @@
 #define RENDER_H
 
 #include <SDL2/SDL.h>
+
+#include "game.h"
 #include "structs.h"
 
-void render_world(SDL_Renderer* renderer, const char** world, int width, int height);
+#define TILE_SIZE 32
 
-void render_player(SDL_Renderer* renderer, Entity* player);
+void render(SDL_Renderer* renderer, Game* game);
 
 #endif
