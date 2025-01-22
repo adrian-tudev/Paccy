@@ -1,4 +1,5 @@
-comp.sh
 bin/
-.ccls
-.ccls-cache
+.*
+include/SDL3/
+lib
+*.dll

@@ -19,7 +19,7 @@ bool game_init(Game* game) {
   game->player.dir.y = 0;
   
   // TODO load map from file and initialize player position accordingly
-  //world = load_world("res/map.txt");
+  // something like world = load_world("res/map.txt");
   static const char* world[] = {
   "#################################",
   "#                               #",
