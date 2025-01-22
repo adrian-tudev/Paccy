@@ -8,6 +8,7 @@
 
 #define TILE_SIZE 32
 
-void render(SDL_Renderer* renderer, Game* game);
+void render_init(SDL_Window* win);
+void render(Game* game);
 
 #endif

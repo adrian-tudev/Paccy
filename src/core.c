@@ -24,15 +24,20 @@ void core_init(Core* core) {
   if (core->window == NULL)
     sdl_error();
 
-  core->renderer = SDL_CreateRenderer(core->window, NULL);
+  /*
+  SDL_Renderer* renderer = SDL_CreateRenderer(core->window, NULL);
 
-  if (core->renderer == NULL)
+  if (renderer == NULL)
     sdl_error();
+  */
 
   // core is owner of game, should call cleanup()
   if (!game_init(&game)) {
     printf("Couldn't initialize the game!\n");
   }
+
+  // let render module create renderer
+  render_init(core->window);
 }
 
 void core_run(Core* core) {
@@ -86,7 +91,7 @@ void core_run(Core* core) {
     }
 
     // RENDER
-    render(core->renderer, &game);
+    render(&game);
 
     Uint32 end = SDL_GetTicks();
     Uint32 frame_duration = end - start;
