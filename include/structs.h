@@ -11,4 +11,10 @@ typedef struct Entity {
   Vec2 dir;
 } Entity;
 
+typedef struct Color {
+  int r;
+  int g;
+  int b;
+} Color;
+
 #endif

@@ -3,10 +3,14 @@
 
 #include <stdbool.h>
 #include "structs.h"
+#include "ghost.h"
+
+#define MAX_GHOSTS 4
 
 typedef struct Game {
   int score;
   Entity player;
+  Ghost* ghosts[MAX_GHOSTS];
   const char** world;
 } Game;
 

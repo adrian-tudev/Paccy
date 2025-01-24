@@ -5,7 +5,7 @@
 #include "error.h"
 #include "game.h"
 #include "render.h"
-#include "input.h" // Include the new input module
+#include "input.h" 
 
 Game game;
 
@@ -40,12 +40,11 @@ void core_run(Core* core) {
   Uint32 elapsed = 0;
   printf("run.\n");
   
-
   while (core->state == RUNNING) {
     Uint32 start = SDL_GetTicks();
 
     // INPUT
-    handle_input(core, &game); // Use the new input module
+    handle_input(core, &game);
 
     // UPDATE according to FPS
     if (elapsed >= 1000 / core->fps) {
