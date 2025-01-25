@@ -8,4 +8,7 @@ typedef struct Ghost {
   Color color;
 } Ghost;
 
+// GHOST controller gives the ghost the next direction
+Vec2 move_ghost(const char** world, int WIDTH, int HEIGHT, Entity ghost);
+
 #endif

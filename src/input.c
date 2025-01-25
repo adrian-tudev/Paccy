@@ -9,23 +9,19 @@ void handle_input(Core* core, Game* game) {
     if (event.type == SDL_EVENT_KEY_DOWN) {
       switch (event.key.scancode) {
         case SDL_SCANCODE_UP:
-          game->player.dir.x = 0;
-          game->player.dir.y = -1;
+          game->player.dir = (Vec2) {0, -1};
           break;
 
         case SDL_SCANCODE_DOWN:
-          game->player.dir.x = 0;
-          game->player.dir.y = 1;
+          game->player.dir = (Vec2) {0, 1};
           break;
 
         case SDL_SCANCODE_RIGHT:
-          game->player.dir.x = 1;
-          game->player.dir.y = 0;
+          game->player.dir = (Vec2) {1, 0};
           break;
 
         case SDL_SCANCODE_LEFT:
-          game->player.dir.x = -1;
-          game->player.dir.y = 0;
+          game->player.dir = (Vec2) {-1, 0};
           break;
 
         default:

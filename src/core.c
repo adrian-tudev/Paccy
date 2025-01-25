@@ -14,7 +14,7 @@ void core_init(Core* core) {
 
   core->win_width = 1440;
   core->win_height = 1080;
-  core->fps = 6;
+  core->fps = 5;
 
   if (!SDL_Init(SDL_INIT_VIDEO))
     sdl_error();

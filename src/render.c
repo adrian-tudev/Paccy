@@ -17,27 +17,9 @@ static void render_rect(SDL_FRect* rect, int r, int g, int b) {
   SDL_RenderFillRect(renderer, rect);
 }
 
-static int get_world_width(const char** world) {
-  if (world == NULL || world[0] == NULL) {
-    return 0;
-  }
-  return strlen(world[0]);
-}
-
-static int get_world_height(const char** world) {
-  int height = 0;
-  while (world[height] != NULL) {
-    height++;
-  }
-  return height;
-}
-
-static void render_world(const char** world) {
-  int width = get_world_width(world);
-  int height = get_world_height(world);
-
-  for (int i = 0; i < height; i++) {
-    for (int j = 0; j < width; j++) {
+static void render_world(const char** world, int WIDTH, int HEIGHT) {
+  for (int i = 0; i < HEIGHT; i++) {
+    for (int j = 0; j < WIDTH; j++) {
       SDL_FRect r = {j * TILE_SIZE, i * TILE_SIZE, TILE_SIZE, TILE_SIZE};
       if (world[i][j] == '#') {
         render_rect(&r, BLUE);
@@ -60,6 +42,16 @@ static void render_ghosts(Ghost** ghosts) {
   }
 }
 
+static void render_coins(Entity** coins, int MAX_COINS) {
+  for (int i = 0; i < MAX_COINS; i++) {
+    if (coins[i] != NULL) {
+      int coin_size = TILE_SIZE / 8;
+      render_rect(&(SDL_FRect){coins[i]->pos.x * TILE_SIZE + (TILE_SIZE / 2) - coin_size / 2, coins[i]->pos.y * TILE_SIZE + (TILE_SIZE / 2) - coin_size / 2,
+       coin_size, coin_size}, WHITE);
+    }
+  }
+}
+
 void render_init(SDL_Window* win) {
   renderer = SDL_CreateRenderer(win, NULL);
   if (renderer == NULL)
@@ -71,9 +63,14 @@ void render(Game* game) {
   SDL_SetRenderDrawColor(renderer, BLACK, 0xFF);
   SDL_RenderClear(renderer);
 
-  render_world(game->world);
+  render_world(game->world, game->WIDTH, game->HEIGHT);
   render_player(&game->player);
   render_ghosts(game->ghosts);
+
+  SDL_SetRenderDrawColor(renderer, WHITE, 0xFF);
+  SDL_RenderRect(renderer, &(SDL_FRect){0, 0, game->WIDTH * TILE_SIZE, game->HEIGHT * TILE_SIZE});
+
+  render_coins(game->coins, game->MAX_COINS);
 
   SDL_RenderPresent(renderer);
 }

@@ -10,8 +10,12 @@
 typedef struct Game {
   int score;
   Entity player;
-  Ghost* ghosts[MAX_GHOSTS];
+  Ghost** ghosts;
+  Entity** coins;
+  int MAX_COINS;
   const char** world;
+  int WIDTH;
+  int HEIGHT;
 } Game;
 
 bool game_init(Game* game);

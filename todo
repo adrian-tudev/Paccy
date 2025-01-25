@@ -1,7 +1,7 @@
 -- TODO --
 
-- ghosts
-- load everything from map
-- coins
+- ghost ai
 - health
-- better input handling
+- buffered inputs
+X load everything from map
+X coins
