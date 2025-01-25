@@ -2,10 +2,9 @@
 #define GAME_H
 
 #include <stdbool.h>
-#include "structs.h"
 #include "ghost.h"
-
-#define MAX_GHOSTS 4
+#include "structs.h"
+#include "utils.h"
 
 typedef struct Game {
   int score;

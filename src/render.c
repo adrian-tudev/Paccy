@@ -65,12 +65,12 @@ void render(Game* game) {
 
   render_world(game->world, game->WIDTH, game->HEIGHT);
   render_player(&game->player);
+  render_coins(game->coins, game->MAX_COINS);
   render_ghosts(game->ghosts);
 
+  // white border around arena
   SDL_SetRenderDrawColor(renderer, WHITE, 0xFF);
   SDL_RenderRect(renderer, &(SDL_FRect){0, 0, game->WIDTH * TILE_SIZE, game->HEIGHT * TILE_SIZE});
-
-  render_coins(game->coins, game->MAX_COINS);
 
   SDL_RenderPresent(renderer);
 }
