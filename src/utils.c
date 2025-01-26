@@ -1,5 +1,8 @@
 #include <assert.h>
+#include <stdio.h>
 #include "utils.h"
+
+#define MAX_LINE_LENGTH 256
 
 int get_world_width(const char** world) {
   if (world == NULL || world[0] == NULL) {
@@ -14,6 +17,37 @@ int get_world_height(const char** world) {
     height++;
   }
   return height;
+}
+char** load_world(const char* filename) {
+  FILE* file = fopen(filename, "r");
+  if (!file) {
+    perror("Failed to open file");
+    return NULL;
+  }
+
+  char** world = NULL;
+  char line[MAX_LINE_LENGTH];
+  int height = 0;
+
+  while (fgets(line, sizeof(line), file)) {
+    // Remove newline character if present
+    size_t len = strlen(line);
+    if (len > 0 && line[len - 1] == '\n') {
+      line[len - 1] = '\0';
+    }
+
+    world = realloc(world, (height + 1) * sizeof(char*));
+    world[height] = strdup(line);
+    height++;
+  }
+
+  fclose(file);
+
+  // Add a NULL terminator to the array
+  world = realloc(world, (height + 1) * sizeof(char*));
+  world[height] = NULL;
+
+  return world;
 }
 
 bool onObstacle(Vec2 pos, const char** world) {

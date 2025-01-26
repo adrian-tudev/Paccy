@@ -1,36 +1,19 @@
 #include "game.h"
 #include "utils.h"
 #include <stdio.h>
+#include <string.h>
 
 bool game_init(Game* game) {
-  // TODO load map from file and initialize player position accordingly
-  // something like world = load_world("res/map.txt");
-  static const char* world[] = {
-    "##################",
-    "#   #        #   #",
-    "# #   ##  ##   # #",
-    "# ##          ## #",
-    "#  #   #  #   #  #",
-    "## ## #GGGG# ## ##",
-    "P     ######      ",
-    "## ##        ## ##",
-    "## #####  ##### ##",
-    "#   ##      ##   #",
-    "# #    ####    # #",
-    "#   ##      ##   #",
-    "##################",
-  };
-
-  game->world = world;
-  game->WIDTH = get_world_width(world);
-  game->HEIGHT = get_world_height(world);
+  game->world = (const char**) load_world("res/map.txt");
+  game->WIDTH = get_world_width(game->world);
+  game->HEIGHT = get_world_height(game->world);
 
   game->player.pos = load_player_pos(game->world);
   game->player.dir = (Vec2){.x = 1, .y = 0};
 
   game->ghosts = load_ghosts(game->world);
 
-  game->MAX_COINS = get_max_coins(game->world);
+  game->MAX_COINS = get_max_coins(game->world); // coins are available where there are empty spaces
   game->coins = load_coins(game->world);
 
   game->score = 0;

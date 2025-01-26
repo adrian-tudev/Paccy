@@ -64,9 +64,9 @@ void render(Game* game) {
   SDL_RenderClear(renderer);
 
   render_world(game->world, game->WIDTH, game->HEIGHT);
-  render_player(&game->player);
   render_coins(game->coins, game->MAX_COINS);
   render_ghosts(game->ghosts);
+  render_player(&game->player);
 
   // white border around arena
   SDL_SetRenderDrawColor(renderer, WHITE, 0xFF);
