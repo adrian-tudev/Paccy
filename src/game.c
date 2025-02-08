@@ -3,27 +3,9 @@
 #include <stdio.h>
 
 bool game_init(Game* game) {
-  // TODO load map from file and initialize player position accordingly
-  // something like world = load_world("res/map.txt");
-  static const char* world[] = {
-    "##################",
-    "#   #        #   #",
-    "# #   ##  ##   # #",
-    "# ##          ## #",
-    "#  #   #  #   #  #",
-    "## ## #GGGG# ## ##",
-    "P     ######      ",
-    "## ##        ## ##",
-    "## #####  ##### ##",
-    "#   ##      ##   #",
-    "# #    ####    # #",
-    "#   ##      ##   #",
-    "##################",
-  };
-
-  game->world = world;
-  game->WIDTH = get_world_width(world);
-  game->HEIGHT = get_world_height(world);
+  game->world = (const char**) load_world("res/maps/map.txt");
+  game->WIDTH = get_world_width(game->world);
+  game->HEIGHT = get_world_height(game->world);
 
   game->player.pos = load_player_pos(game->world);
   game->player.dir = (Vec2){.x = 1, .y = 0};

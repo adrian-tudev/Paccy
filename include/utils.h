@@ -4,10 +4,11 @@
 
 #include "structs.h"
 
-// miscellaneous helper functions for the main game logic ig (should maybe be refactored into player and coin files etc.)
+// miscellaneous helper functions for the main game logic ig (should maybe be refactored into player and coin modules etc.)
 
 int get_world_width(const char** world);
 int get_world_height(const char** world);
+char** load_world(const char* file_name);
 void move_entity(Entity* entity, const char** world, int WIDTH, int HEIGHT);
 bool onObstacle(Vec2 pos, const char** world);
 Vec2 load_player_pos(const char** world);
