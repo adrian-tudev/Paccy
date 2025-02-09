@@ -51,7 +51,7 @@ Vec2 move_ghost(const char** world, int WIDTH, int HEIGHT, Entity ghost) {
   for (int i = 0; i < cnt; i++) {
     Vec2 prev_pos = ghost.pos;
     ghost.dir = choices[i];
-    move_entity(&ghost, world, WIDTH, HEIGHT);
+    entity_move(&ghost, world, WIDTH, HEIGHT);
 
     if (ghost.pos.x == prev_pos.x && ghost.pos.y == prev_pos.y) {
       choices[i] = (Vec2){.x = 0, .y = 0};

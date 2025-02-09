@@ -7,7 +7,7 @@ bool game_init(Game* game) {
   game->WIDTH = get_world_width(game->world);
   game->HEIGHT = get_world_height(game->world);
 
-  game->player.pos = load_player_pos(game->world);
+  game->player.pos = player_load_pos(game->world);
   game->player.dir = (Vec2){.x = 1, .y = 0};
 
   game->ghosts = load_ghosts(game->world);
@@ -34,8 +34,7 @@ static void update_coins(Game* game) {
 }
 
 void game_step(Game* game) {
-  Entity* player = &game->player;
-  move_entity(player, game->world, game->WIDTH, game->HEIGHT);
+  entity_move(&game->player, game->world, game->WIDTH, game->HEIGHT);
   update_coins(game);
 
   for (int i = 0; i < MAX_GHOSTS; i++) {
@@ -43,7 +42,7 @@ void game_step(Game* game) {
     if (game->ghosts[i] != NULL) {
       Vec2 gen_ghost_move = move_ghost(game->world, game->WIDTH, game->HEIGHT, game->ghosts[i]->entity);
       game->ghosts[i]->entity.dir = gen_ghost_move;
-      move_entity(&game->ghosts[i]->entity, game->world, game->WIDTH, game->HEIGHT);
+      entity_move(&game->ghosts[i]->entity, game->world, game->WIDTH, game->HEIGHT);
     }
   }
 }

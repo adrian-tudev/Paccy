@@ -8,7 +8,7 @@
 #define YELLOW  0xFF, 0xFF, 0
 #define BLUE    0,    0   , 0xFF
 
-#define COLOR_ARGS(color) color.r, color.g, color.b
+#define EXPAND_COLOR(color) color.r, color.g, color.b
 
 SDL_Renderer* renderer = NULL;
 
@@ -37,7 +37,7 @@ static void render_ghosts(Ghost** ghosts) {
   for (int i = 0; i < MAX_GHOSTS; i++) {
     if (ghosts[i] != NULL) {
       render_rect(&(SDL_FRect){ghosts[i]->entity.pos.x * TILE_SIZE, ghosts[i]->entity.pos.y * TILE_SIZE,
-       TILE_SIZE, TILE_SIZE}, COLOR_ARGS(ghosts[i]->color));
+       TILE_SIZE, TILE_SIZE}, EXPAND_COLOR(ghosts[i]->color));
     }
   }
 }

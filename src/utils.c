@@ -2,6 +2,11 @@
 #include <stdio.h>
 #include "utils.h"
 
+// Define a function to compare two Vec2 structures
+bool vec2_equal(Vec2 a, Vec2 b) {
+  return a.x == b.x && a.y == b.y;
+}
+
 #define MAX_LINE_LENGTH 256
 
 int get_world_width(const char** world) {
@@ -51,13 +56,13 @@ char** load_world(const char* file_name) {
   return world;
 }
 
-bool onObstacle(Vec2 pos, const char** world) {
+bool on_obstacle(Vec2 pos, const char** world) {
   if (world[pos.y][pos.x] == '#')
     return true;
   return false;
 }
 
-// wrap around if position goes out of bounds
+// calculate next position according to dir and wrap around if position goes out of bounds
 Vec2 step_pos(Vec2 pos, Vec2 dir, int WIDTH, int HEIGHT) {
   Vec2 next_pos = {.x = (pos.x + dir.x) % WIDTH, .y = (pos.y + dir.y) % HEIGHT};
   if (next_pos.x < 0) {
@@ -69,15 +74,18 @@ Vec2 step_pos(Vec2 pos, Vec2 dir, int WIDTH, int HEIGHT) {
   return next_pos;
 }
 
-void move_entity(Entity* entity, const char** world, int WIDTH, int HEIGHT) {
+bool entity_valid_move(const Entity* entity, const char** world, int WIDTH, int HEIGHT) {
   Vec2 next_pos = step_pos(entity->pos, entity->dir, WIDTH, HEIGHT);
+  return !on_obstacle(next_pos, world);
+}
 
-  if (!onObstacle(next_pos, world)) {
-    entity->pos = next_pos;
+void entity_move(Entity* entity, const char** world, int WIDTH, int HEIGHT) {
+  if (entity_valid_move(entity, world, WIDTH, HEIGHT)) {
+    entity->pos = step_pos(entity->pos, entity->dir, WIDTH, HEIGHT);
   }
 }
 
-Vec2 load_player_pos(const char** world) {
+Vec2 player_load_pos(const char** world) {
   Vec2 pos = {-1, -1};
   for (int i = 0; i < get_world_height(world); i++) {
     for (int j = 0; j < get_world_width(world); j++) {

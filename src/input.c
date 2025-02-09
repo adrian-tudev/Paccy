@@ -1,5 +1,7 @@
 #include "input.h"
 
+Vec2 nxt_dir;
+
 void handle_input(Core* core, Game* game) {
   SDL_Event event;
   while (SDL_PollEvent(&event)) {
@@ -9,24 +11,36 @@ void handle_input(Core* core, Game* game) {
     if (event.type == SDL_EVENT_KEY_DOWN) {
       switch (event.key.scancode) {
         case SDL_SCANCODE_UP:
-          game->player.dir = (Vec2) {0, -1};
+          nxt_dir = (Vec2) {0, -1};
+          game->player.dir = nxt_dir;
           break;
 
         case SDL_SCANCODE_DOWN:
-          game->player.dir = (Vec2) {0, 1};
+          nxt_dir= (Vec2) {0, 1};
+          game->player.dir = nxt_dir;
           break;
 
         case SDL_SCANCODE_RIGHT:
-          game->player.dir = (Vec2) {1, 0};
+          nxt_dir = (Vec2) {1, 0};
+          game->player.dir = nxt_dir;
           break;
 
         case SDL_SCANCODE_LEFT:
-          game->player.dir = (Vec2) {-1, 0};
+          nxt_dir = (Vec2) {-1, 0};
+          game->player.dir = nxt_dir;
           break;
 
         default:
           break;
       }
     }
+
+    /*
+    // store move until valid
+    Entity temp = game->player;
+    temp.dir = nxt_dir;
+    if (entity_valid_move(&temp, game->world, game->WIDTH, game->HEIGHT)) {
+      game->player = temp;
+    }*/
   }
 }
