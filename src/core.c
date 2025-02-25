@@ -12,9 +12,14 @@ Game game;
 void core_init(Core* core) {
   core->state = INIT;
 
-  core->win_width = 1440;
-  core->win_height = 1080;
-  core->fps = 5;
+  // core is owner of game, should call cleanup()
+  if (!game_init(&game)) {
+    printf("Couldn't initialize the game!\n");
+  }
+
+  core->win_width = game.WIDTH * TILE_SIZE;
+  core->win_height = game.HEIGHT * TILE_SIZE;
+  core->fps = 60;
 
   if (!SDL_Init(SDL_INIT_VIDEO))
     sdl_error();
@@ -24,11 +29,6 @@ void core_init(Core* core) {
 
   if (core->window == NULL)
     sdl_error();
-
-  // core is owner of game, should call cleanup()
-  if (!game_init(&game)) {
-    printf("Couldn't initialize the game!\n");
-  }
 
   // let render module create renderer
   render_init(core->window);

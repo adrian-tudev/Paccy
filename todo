@@ -1,10 +1,13 @@
 -- TODO --
 
-- buffered inputs
-- smooth movement
-- animation
 - ghost ai
 - health
-- UX and finishing touches
+X smooth movement
+X animation
 X load everything from map
 X coins
+X buffered inputs
+
+-- Maybe? --
+- refactor all entity functions into a separate module
+- refactor coin into separate module

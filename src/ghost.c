@@ -3,7 +3,7 @@
 #include "structs.h"
 #include "ghost.h"
 
-Ghost** load_ghosts(const char** world) {
+Ghost** ghost_load(const char** world, int TILE_SIZE) {
   Ghost** ghosts = (Ghost**) malloc(sizeof(Ghost*) * MAX_GHOSTS);
   for (int i = 0; i < MAX_GHOSTS; i++) {
     ghosts[i] = NULL;
@@ -21,8 +21,9 @@ Ghost** load_ghosts(const char** world) {
       if (world[i][j] == 'G') {
         ghosts[idx] = NULL;
         ghosts[idx] = (Ghost*) malloc(sizeof(Ghost));
-        ghosts[idx]->entity.pos = (Vec2){.x = j, .y = i};
+        ghosts[idx]->entity.pos = (Vec2){.x = j * TILE_SIZE, .y = i * TILE_SIZE};
         ghosts[idx]->entity.dir = (Vec2){.x = 0, .y = 1};
+        ghosts[idx]->entity.speed = GHOST_SPEED;
         ghosts[idx]->color = ghost_colors[idx];
         idx++;
       }
@@ -31,16 +32,15 @@ Ghost** load_ghosts(const char** world) {
   return ghosts;
 }
 
-Vec2 move_ghost(const char** world, int WIDTH, int HEIGHT, Entity ghost) {
+Vec2 ghost_gen_move(Entity ghost, char** world, int WIDTH, int HEIGHT) {
   Vec2 choices[3];
   int cnt = 0;
-  for (int i = -1; i < 2; i++) {
-    for (int j = -1; j < 2; j++) {
-      if (i == 0 && j == 0) {
+  for (int i = -1; i <= 1; i++) {
+    for (int j = -1; j <= 1; j++) {
+      if ((i == 0 && j == 0) || (i == -ghost.dir.x && j == -ghost.dir.y))
         continue;
-      }
-      // generates a list of possible directions for the ghost to move (not opposite of current direction)
-      if ((i == 0 || j == 0) && ghost.dir.x != -i && ghost.dir.y != -j) {
+      // generates a list of possible directions for the ghost to move (not where it came from)
+      if (i == 0 || j == 0) {
         choices[cnt++] = (Vec2){.x = i, .y = j};
       }
     }

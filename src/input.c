@@ -39,7 +39,7 @@ void handle_input(Core* core, Game* game) {
   // store move until valid
   Entity temp = game->player;
   temp.dir = nxt_dir;
-  if (entity_valid_move(&temp, game->world, game->WIDTH, game->HEIGHT)) {
+  if (entity_valid_move(&temp, game->world, game->WIDTH, game->HEIGHT, TILE_SIZE)) {
     game->player = temp;
   }
 }

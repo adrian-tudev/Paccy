@@ -6,6 +6,10 @@
 #include "structs.h"
 #include "utils.h"
 
+#define TILE_SIZE 32
+#define COIN_SIZE TILE_SIZE / 4
+#define PLAYER_SPEED 2
+
 typedef struct Game {
   int score;
   Entity player;

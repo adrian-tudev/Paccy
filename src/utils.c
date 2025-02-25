@@ -1,11 +1,8 @@
+#include <SDL3/SDL.h>
+
 #include <assert.h>
 #include <stdio.h>
 #include "utils.h"
-
-// Define a function to compare two Vec2 structures
-bool vec2_equal(Vec2 a, Vec2 b) {
-  return a.x == b.x && a.y == b.y;
-}
 
 #define MAX_LINE_LENGTH 256
 
@@ -56,42 +53,66 @@ char** load_world(const char* file_name) {
   return world;
 }
 
-bool on_obstacle(Vec2 pos, const char** world) {
-  if (world[pos.y][pos.x] == '#')
-    return true;
+bool on_obstacle(Vec2 pos, const char** world, int TILE_SIZE) {
+  int w = get_world_width(world);
+  int h = get_world_height(world);
+
+  // iterate over every wall and check if player is colliding
+  for (int i = 0; i < h; i++) {
+    for (int j = 0; j < w; j++) {
+      if (world[i][j] == '#') {
+        SDL_Rect tile = {j * TILE_SIZE, i * TILE_SIZE, TILE_SIZE, TILE_SIZE};
+        SDL_Rect player_rect = {pos.x, pos.y, TILE_SIZE, TILE_SIZE};
+        if (SDL_HasRectIntersection(&tile, &player_rect)) {
+          return true;
+        }
+      }
+    }
+  }
+
   return false;
 }
 
-// calculate next position according to dir and wrap around if position goes out of bounds
-Vec2 step_pos(Vec2 pos, Vec2 dir, int WIDTH, int HEIGHT) {
-  Vec2 next_pos = {.x = (pos.x + dir.x) % WIDTH, .y = (pos.y + dir.y) % HEIGHT};
-  if (next_pos.x < 0) {
-    next_pos.x = WIDTH - 1;
-  }
-  if (next_pos.y < 0) {
-    next_pos.y = HEIGHT - 1;
-  }
+// calculate next position according to dir
+Vec2 step_pos(Vec2 pos, Vec2 dir, int WIDTH, int HEIGHT, int SPEED) {
+  Vec2 next_pos = {.x = pos.x + dir.x * SPEED, .y = pos.y + dir.y * SPEED};
   return next_pos;
 }
 
-bool entity_valid_move(const Entity* entity, const char** world, int WIDTH, int HEIGHT) {
-  Vec2 next_pos = step_pos(entity->pos, entity->dir, WIDTH, HEIGHT);
-  return !on_obstacle(next_pos, world);
+bool entity_valid_move(const Entity* entity, const char** world, int WIDTH, int HEIGHT, int TILE_SIZE) {
+  Vec2 next_pos = step_pos(entity->pos, entity->dir, WIDTH, HEIGHT, entity->speed);
+  return !on_obstacle(next_pos, world, TILE_SIZE);
 }
 
-void entity_move(Entity* entity, const char** world, int WIDTH, int HEIGHT) {
-  if (entity_valid_move(entity, world, WIDTH, HEIGHT)) {
-    entity->pos = step_pos(entity->pos, entity->dir, WIDTH, HEIGHT);
+// TODO: should wrap around if out of bounds
+void entity_move(Entity* entity, const char** world, int WIDTH, int HEIGHT, int TILE_SIZE) {
+  
+  // wrap around on x axis
+  if (entity->pos.x >= WIDTH * TILE_SIZE) {
+    entity->pos.x = 0;
+  } else if (entity->pos.x + TILE_SIZE <= 0) {
+    entity->pos.x = WIDTH * TILE_SIZE - TILE_SIZE;
+  }
+
+  // wrap around on y axis
+  if (entity->pos.y >= HEIGHT * TILE_SIZE) {
+    entity->pos.y = 0;
+  } else if (entity->pos.y + TILE_SIZE <= 0) {
+    entity->pos.y = HEIGHT * TILE_SIZE - TILE_SIZE;
+  }
+
+  if (entity_valid_move(entity, world, WIDTH, HEIGHT, TILE_SIZE)) {
+    entity->pos = step_pos(entity->pos, entity->dir, WIDTH, HEIGHT, entity->speed);
   }
 }
 
-Vec2 player_load_pos(const char** world) {
+Vec2 player_load_pos(const char** world, int TILE_SIZE) {
   Vec2 pos = {-1, -1};
   for (int i = 0; i < get_world_height(world); i++) {
     for (int j = 0; j < get_world_width(world); j++) {
       if (world[i][j] == 'P') {
-        pos.x = j;
-        pos.y = i;
+        pos.x = j * TILE_SIZE;
+        pos.y = i * TILE_SIZE;
         return pos;
       }
     }
@@ -119,11 +140,10 @@ Entity** load_coins(const char** world) {
   for (int i = 0; i < get_world_height(world); i++) {
     for (int j = 0; j < get_world_width(world); j++) {
       if (world[i][j] == ' ') {
-          coins[idx] = NULL;
-          coins[idx] = (Entity*) malloc(sizeof(Entity));
-          coins[idx]->pos = (Vec2){.x = j, .y = i};
-          coins[idx]->dir = (Vec2){.x = 0, .y = 0};
-          idx++;
+        coins[idx] = (Entity*) malloc(sizeof(Entity));
+        coins[idx]->pos = (Vec2){.x = j, .y = i};
+        coins[idx]->dir = (Vec2){.x = 0, .y = 0};
+        idx++;
       }
     }
   }

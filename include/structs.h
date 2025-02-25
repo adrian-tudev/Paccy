@@ -9,6 +9,7 @@ typedef struct Vec2 {
 typedef struct Entity {
   Vec2 pos;
   Vec2 dir;
+  int speed;
 } Entity;
 
 typedef struct Color {
